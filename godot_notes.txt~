@@ -1,0 +1,232 @@
+
+GODOT OFFICIAL DOCUMENTATION
+
+02 SCENES AND NODES-
+
+nodes - fundamental building blocks for creating a game.
+
+Any node has
+	- a name
+	- editable properties
+	- recieve a callback to process any time
+	- can be extended
+	- can be added to another node as child
+
+MNEMONIC - Noah Ends Rains in Every Continent.
+
+
+Scenes -
+composed of a group of nodes organized in a tree fashion.
+
+A scene
+	-has a root node
+	- can be saved to disk and loaded back
+	- can be instanced
+
+MNEMONIC - Red Shirt with Ink.
+
+always add files to resource path before running a scene/game.
+
+
+03 INSTANCING:
+
+Adding an instance of a scene to another scene (generally main).
+
+whenever you modify the scene that is instanced, it takes effect in
+all the places where the instance is created.
+
+
+instancing uses:
+	- Wonderful design language (refer image)
+	- ability to subdivide scenes and make them easier to manage
+	- manage multiple node instances at once.
+	- way to organize and embed complex game flows or UIs
+
+
+once a design diagram is made, the recommended process for making a game
+is to create a scene for each element listed in the diagram.
+
+
+04 SCRIPTING:
+
+four languages - GDScript, VisualScript, C# and C++
+
+GDScript -
+	- high level, dynamically typed language
+
+identifiers are CASE SENSITIVE (FOO is different from foo)
+
+# this is a comment in GDScript
+
+basic builtin types
+	- null
+	- bool
+	- int
+	- float
+	- String
+vector builtin types
+	- Vector2	//2d vector; fields - x, y
+	- Rect2		//2d rectangle with fields - position, size; end field:position and size
+	- Vector3	//3d vector; fields - x, y, z
+	- Transform2D	//for 2d transformation
+Engine builtin types
+	- Color		//fields - r, g, b, a
+	- NodePath
+	- RID		//Resource ID 
+	- Object	//base class for anything that is not a builtin type
+Container builtin types
+	- Array		// var arr = []
+	- Dictionary	// associative container i.e. values referenced by unique keys
+
+DATA 
+	-variables
+		- can exist as class member functions. created with var
+		  keyword.
+		- can optionally have type specification. // var a: int = 2;
+		- valid types
+			- builtin
+			- engine classes (Node, Resource, etc)
+			- Constant names if they have script resource
+			- other classes in the same script
+			- script classes declared with class_name keyword.
+
+
+CASTING - use 'as' keyword.
+
+FUNCTIONS 	- default return value is null.
+		- return type can be specified using -> // func thisf() -> int:
+
+		- non void functions MUST RETURN A VALUE (including flow
+		  statements)
+
+		- functions cannot be stored in variables or passed as an
+		  argument to another function
+		- to refer a func at runtime  use 'call' or 'funcref' helpers
+
+
+Script adds behavior to a node.
+used to control how the node functions.
+local scope of the script is the node.
+
+
+Signals
+	- signals are emitted when some kind of specific action happens.
+	- they can be connected to any function of any script instance.
+	- used mostly in GUI nodes.
+
+Signalling steps
+	1. Forming connections
+	2. defining custom function
+
+
+in the connection creation dialogue box, the emitting node name is highlighted in blue.
+bottom of dialogue shows name of the method that will be created
+template : $ _on_[EmitterNode]_[signal_name]
+
+most used function - $ Node.get_node()
+
+it uses paths to fetch nodes anywhere in the scene, relative to the node that
+owns the script.
+
+
+get_node(path) searches it's immediate children.
+
+looking at the example below:
+Panel
+ - Label
+ - Button
+
+The immediate children are Label and Button. path is replaced by the node
+name. thus get node is written as  - get_node("Button")
+
+Look at another example
+Node2D
+ - Label
+   - Button
+
+The immediate child is Label whose immediate child is Button. If button is to
+be recieved in the Node2D.gd script, we write - get_node("Label/Button")
+
+
+object.connect() need not be typed in _ready() if the node is signalled using
+the connection creation dialogue box.
+
+
+PROCESSING:
+
+some code needs to run every time i.e. processed on every frame.
+you need a script for the processing stage.
+
+two types of processing:
+ - idle processing
+ - physics processing
+
+Idle processing - activated when method Node._process() is found in a script.
+
+physics processing - used for processes that must happen before each physics
+step.
+
+groups - work like tags
+
+nodes can be created from code by using .new() method
+
+remove a node safely $ s.queue_free()	//using queue_free() to remove the
+node
+
+05. SIGNALS:
+
+they are a version of the observer pattern.
+they allow a node to send a message that other nodes can listen and respond
+to.
+
+function naming syntax:
+_on_<node_name>_<signal_name>
+
+
+eg. _on_Sprite_connected
+
+syntax of connecting using code:
+<source_node>.connect(<signal_name>, <target_node>, <target_function_name>)
+
+eg. Label.connect("connected", self, "_on_JonyButton_pressed");
+
+
+07 MAKING FIRST GAME
+
+GDScript organization:
+
+01. tool
+02. class_name
+03. extends
+04. # docstring
+
+05. signals
+06. enums
+07. constants
+08. exported variables
+09. public variables
+10. private variables
+11. onready variables
+
+12. optional built-in virtual _init method
+13. built-in virtual _ready method
+14. remaining built-in virtual methods
+15. public methods
+16. private methods
+
+
+every player needs some certain functions which change often:
+ - check for input
+ - move in the given direction
+ - play the appropriate animation
+
+in GDScript, $ returns the node at the relative path of the current node( in
+which you are editing the script).
+
+Also, $ is shorthand for get_node()
+
+eg. $AnimatedSprite.play() equivalent to get_node("AnimatedSprite").play()
+
+clamping - resticting a value to a given range.
+
+
